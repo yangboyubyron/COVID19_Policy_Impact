@@ -1,5 +1,6 @@
 rm(list = ls())
-cat("\f") 
+cat("\f")
+library(tidyverse)
 
 # Prepare needed libraries
 library.list <- c("tidyr")
@@ -26,6 +27,8 @@ data <- subset(data, select = -c(X))
 rm(state_restric)
 
 
+colnames(data) <- tolower(gsub("__", "_", substring(gsub("[ .]", "_", gsub('([[:upper:]])', ' \\1', colnames(data))), 2)))
+
 variable_search <- function(df, search_range = 20){
   df <- data.frame(df)
   best_aval <- c()
@@ -38,51 +41,156 @@ variable_search <- function(df, search_range = 20){
 }
 
 #Append last known hospital bed data in past 20 years to main df, if not known in past 20 years -> NA
+#Hospital beds per million for later comparisons
 hospital_beds <- read.csv("API_SH.MED.BEDS.ZS_DS2_en_csv_v2_988924.csv")
 hospital_beds <- variable_search(hospital_beds, search_range = 20)
-names(hospital_beds)[names(hospital_beds) == "var_name"] <- "hostpital_beds"
-data <- merge(data, hospital_beds, by.x="CountryCode", by.y="Country.Code", all.x = TRUE)
+names(hospital_beds)[names(hospital_beds) == "var_name"] <- "hospital_beds_per_million"
+hospital_beds$hospital_beds_per_million <- hospital_beds$hospital_beds_per_million * 1000
+data <- merge(data, hospital_beds, by.x="country_code", by.y="Country.Code", all.x = TRUE)
 rm(hospital_beds)
 
 #Population Density merge
-pop_density <- read.csv("API_EN.POP.DNST_DS2_en_csv_v2_988966.csv")
-pop_density <- variable_search(pop_density, search_range = 20)
-names(pop_density)[names(pop_density) == "var_name"] <- "pop_density"
-data <- merge(data, pop_density, by.x = "CountryCode", by.y = "Country.Code", all.x = TRUE)
-rm(pop_density)
+people_per_sq_km <- read.csv("API_EN.POP.DNST_DS2_en_csv_v2_988966.csv")
+people_per_sq_km <- variable_search(people_per_sq_km, search_range = 20)
+names(people_per_sq_km)[names(people_per_sq_km) == "var_name"] <- "people_per_sq_km"
+data <- merge(data, people_per_sq_km, by.x = "country_code", by.y = "Country.Code", all.x = TRUE)
+rm(people_per_sq_km)
 
 #GDP per capita merge
 gdp_percap <- read.csv("API_NY.GDP.PCAP.PP.CD_DS2_en_csv_v2_988619.csv")
 gdp_percap <- variable_search(gdp_percap, search_range = 20)
 names(gdp_percap)[names(gdp_percap) == "var_name"] <- "gdp_percap"
-data <- merge(data, gdp_percap, by.x="CountryCode", by.y="Country.Code", all.x = TRUE)
+data <- merge(data, gdp_percap, by.x="country_code", by.y="Country.Code", all.x = TRUE)
 rm(gdp_percap)
 
-#Population data
+#Population Total
 pop <- read.csv("API_SP.POP.TOTL_DS2_en_csv_v2_988606.csv")
 pop <- variable_search(pop, search_range = 10)
-names(pop)[names(pop) == "var_name"] <- "population_thousands"
-data <- merge(data, pop, by.x="CountryCode", by.y="Country.Code", all.x = TRUE)
-data$population_thousands = data$population_thousands/1000
+names(pop)[names(pop) == "var_name"] <- "population_millions"
+data <- merge(data, pop, by.x="country_code", by.y="Country.Code", all.x = TRUE)
+data$population_millions = data$population_millions/1000000
 rm(pop)
+
+#Population demographics
+pop0014 <- read.csv("API_SP.POP.0014.TO.ZS_DS2_en_csv_v2_998839.csv")
+pop0014 <- variable_search(pop0014, search_range = 20)
+names(pop0014)[names(pop0014) == "var_name"] <- "age_percent_0_to_14"
+data <- merge(data, pop0014, by.x="country_code", by.y="Country.Code", all.x = TRUE)
+data$age_percent_0_to_14 = data$age_percent_0_to_14
+rm(pop0014)
+
+pop1564 <- read.csv("API_SP.POP.1564.TO.ZS_DS2_en_csv_v2_988895.csv")
+pop1564 <- variable_search(pop1564, search_range = 20)
+names(pop1564)[names(pop1564) == "var_name"] <- "age_percent_15_to_64"
+data <- merge(data, pop1564, by.x="country_code", by.y="Country.Code", all.x = TRUE)
+data$age_percent_15_to_64 = data$age_percent_15_to_64
+rm(pop1564)
+
+pop65UP <- read.csv("API_SP.POP.65UP.TO.ZS_DS2_en_csv_v2_988979.csv")
+pop65UP <- variable_search(pop65UP, search_range = 20)
+names(pop65UP)[names(pop65UP) == "var_name"] <- "age_percent_65_UP"
+data <- merge(data, pop65UP, by.x="country_code", by.y="Country.Code", all.x = TRUE)
+data$age_percent_65_UP = data$age_percent_65_UP
+rm(pop65UP)
+
 
 
 #Handle NULL values for cases/deaths by carrying forward last known value until next reported value is recorded
+#First have to reorder data due to shuffling from pervious merges
+data %>% arrange(country_code, Date) -> data
 
 
-#COVID19 confirmed cases and deaths per thousand (As of 23 April 2020)
-data$deaths_per_thousand = data$ConfirmedDeaths/data$population_thousands
-data$cases_per_thousand = data$ConfirmedCases/data$population_thousands
+#Confirmed Cases
+main <- c()
+for(country in unique(data$country_code)){
+  df <- subset(data, country_code == country)
+  last_recorded <- NA
+  vec <- c()
+  for(cases in df$confirmed_cases){
+    if(is.na(cases) & is.na(last_recorded)){
+      last_recorded <- 0
+      vec <- c(vec, last_recorded)
+    }
+    else if(is.na(cases)){
+      vec <- c(vec, last_recorded)
+    }
+    else{
+      last_recorded <- cases
+      vec <- c(vec, last_recorded)
+    }
+  }
+  main <- append(main, vec)
+}
+data$confirmed_cases <- main
+
+#Confirmed Deaths
+main <- c()
+for(country in unique(data$country_code)){
+  df <- subset(data, country_code == country)
+  last_recorded <- NA
+  vec <- c()
+  for(deaths in df$confirmed_deaths){
+    if(is.na(deaths) & is.na(last_recorded)){
+      last_recorded <- 0
+      vec <- c(vec, last_recorded)
+    }
+    else if(is.na(deaths)){
+      vec <- c(vec, last_recorded)
+    }
+    else{
+      last_recorded <- deaths
+      vec <- c(vec, last_recorded)
+    }
+  }
+  main <- append(main, vec)
+}
+data$confirmed_deaths <- main
+
+rm(df, cases, country, deaths, last_recorded, main, vec, variable_search)
+#COVID19 confirmed cases and deaths per million (As of 23 April 2020)
+data$deaths_per_million <- data$confirmed_deaths/data$population_millions
+data$cases_per_million <- data$confirmed_cases/data$population_millions
+
+data$spare_beds_per_million <- data$hospital_beds_per_million - data$cases_per_million
 
 
+#Constrain Data to only consider results after 1 Death
+data_known_deaths <- subset(data, data$confirmed_cases >= 1)
+data_known_cases <- subset(data, data$confirmed_deaths >= 1)
 
+#New variable for indexing
+main <- c()
+for(country in unique(data_known_deaths$country_code)){
+  df <- subset(data_known_deaths, country_code== country)
+  days_since_first <- 0
+  vec <- c()
+  for(day in df$Date){
+    days_since_first <- days_since_first + 1
+    vec <- c(vec, days_since_first)
+  }
+  main <- append(main, vec)
+}
+data_known_deaths$days_since_first_death <- main
 
+main <- c()
+for(country in unique(data_known_cases$country_code)){
+  df <- subset(data_known_cases, country_code == country)
+  days_since_first <- 0
+  vec <- c()
+  for(day in df$Date){
+    days_since_first <- days_since_first + 1
+    vec <- c(vec, days_since_first)
+  }
+  main <- append(main, vec)
+}
+data_known_cases$days_since_first_case <- main
 
+rm(country, day, days_since_first, main, vec, df)
 
-#Population Age Demographics
-#pop_age_demo <- read.csv("WPP2019_PopulationByAgeSex_Medium.csv")
-#temp <- subset(pop_age_demo, Time == 2020)
-
+###PLOT
+#death_traj <- ggplot(data_known_deaths, aes(x = days_since_first_death, y = log(ConfirmedDeaths), group = CountryCode, color = CountryCode)) +
+#              geom_line(linetype = "solid", size = 1) 
+#death_traj
 
 
 #Temperature Statistics by Country
@@ -102,8 +210,7 @@ apr <- subset(data, month == 4)
 state_temps$Country <- strsplit(tolower(state_temps$Country), " ")
 jan$CountryName <- strsplit(tolower(jan$CountryName), " ")
 
-
-merge(state_temps, jan, by.x = "Country", by.y = "CountryName")
+rm(jan, feb, mar, apr, state_temps)
 
 
 
