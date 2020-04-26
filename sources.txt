@@ -3,3 +3,5 @@ Temperature Data:
 http://ds.data.jma.go.jp/gmd/tcc/tcc/products/climate/index.html
 State Policy Data:
 https://github.com/OxCGRT/covid-policy-tracker
+Smoking Data:
+https://www.who.int/data/gho

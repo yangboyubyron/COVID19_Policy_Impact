@@ -1,9 +1,9 @@
 rm(list = ls())
 cat("\f")
-library(tidyverse)
+
 
 # Prepare needed libraries
-library.list <- c("tidyr")
+library.list <- c("tidyr", "tidyverse")
 for (i in 1:length(library.list)) {
   if (!library.list[i] %in% rownames(installed.packages())) {
     install.packages(library.list[i])
@@ -93,11 +93,17 @@ data <- merge(data, pop65UP, by.x="country_code", by.y="Country.Code", all.x = T
 data$age_percent_65_UP = data$age_percent_65_UP
 rm(pop65UP)
 
+smoking_prev <- read.csv("smoking_data.csv")
+smoking_prev <- smoking_prev[c("name", "totalSmokingRate")]
+names(smoking_prev)[names(smoking_prev) == "totalSmokingRate"] <- "percent_smoking_prev"
+data <- merge(data, smoking_prev, by.x="country_name", by.y="name", all.x = TRUE)
+rm(smoking_prev)
+
 
 
 #Handle NULL values for cases/deaths by carrying forward last known value until next reported value is recorded
 #First have to reorder data due to shuffling from pervious merges
-data %>% arrange(country_code, Date) -> data
+data %>% arrange(country_code, date) -> data
 
 
 #Confirmed Cases
@@ -192,7 +198,7 @@ rm(country, day, days_since_first, main, vec, df)
 #              geom_line(linetype = "solid", size = 1) 
 #death_traj
 
-
+"""
 #Temperature Statistics by Country
 state_temps <- read.csv("monthly_temps_by_country.csv")
 require(data.table)
@@ -211,7 +217,11 @@ state_temps$Country <- strsplit(tolower(state_temps$Country), " ")
 jan$CountryName <- strsplit(tolower(jan$CountryName), " ")
 
 rm(jan, feb, mar, apr, state_temps)
+"""
 
+covid_country_level_data <- data
+rm(data)
 
-
-write.csv(acs.sales.cleaned, "C:/Users/brian/Documents/SoftwareTools/Project/CleanedData/03.acs.sales.cleaned.csv")
+write.csv(covid_country_level_data, "C:/Users/brian/Documents/GitHub/COVID19_Policy_Impact/data/covid_country_level_data.csv")
+write.csv(data_known_cases, "C:/Users/brian/Documents/GitHub/COVID19_Policy_Impact/data/known_covid19_deaths.csv")
+write.csv(data_known_deaths, "C:/Users/brian/Documents/GitHub/COVID19_Policy_Impact/data/known_covid19_cases.csv")
