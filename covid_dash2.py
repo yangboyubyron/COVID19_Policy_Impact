@@ -4,6 +4,7 @@ import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output, State
 import plotly.express as px
+import plotly.graph_objs as go
 import numpy as np
 from dash.exceptions import PreventUpdate
 
@@ -57,32 +58,31 @@ app.layout = html.Div([
 ])
 
 @app.callback(
-    [Output(component_id='map', component_property='figure'),
-    Output(component_id='growth', component_property='figure')],
+    Output(component_id='map', component_property='figure'),
     [Input(component_id='variable_selector', component_property='value'),
     Input(component_id='year_slider', component_property= 'value')],
 )
 def update_output(var_selected, year_selected):
-    if var_selected is None:
-        raise PreventUpdate
-    else:
-        df = covid_data.query(f"day_of_year=={year_selected}")
-        #['date', 'day_of_year', 'country_code', 'country_name', str(var_selected)]
+    df = covid_data[[var_selected, 'day_of_year', 'date', 'country_name', 'country_code']]
 
-        map = px.choropleth(df, locations="country_code",
-                            color="deaths_per_million",
-                            hover_name="country_name",
-                            projection='natural earth',
-                            title=f'{var_selected}',
-                            color_continuous_scale=px.colors.sequential.Reds,
-                            range_color = (0, 50))
+    map = go.Figure(data=go.Choropleth(
+        locations = df['country_code'],
+        locationmode = 'ISO-3',
+        z = df[var_selected],
+        colorscale = 'Reds',
+        marker_line_color = 'black',
+        marker_line_width = 0.5,
+        ))
+    map.update_layout(
+        title_text = 'Confirmed Cases as of March 28, 2020',
+        title_x = 0.5,
+        geo=dict(
+            showframe = False,
+            showcoastlines = False,
+            projection_type = 'equirectangular'
+        ))
 
-        map.update_layout(title=dict(font=dict(size=28),x=0.5,xanchor='center'),
-                          margin=dict(l=60, r=60, t=50, b=50))
-
-        g_fig = px.line(df, x = "date", y= var_selected, color="country_code", title=f'{var_selected}')
-
-        return (map, g_fig)
+    return map
 
 if __name__ == '__main__':
     app.run_server(debug=True)
