@@ -105,7 +105,20 @@ rm(smoking_prev)
 #First have to reorder data due to shuffling from pervious merges
 data %>% arrange(country_code, date) -> data
 
+main <- c()
+for(country in unique(data$country_code)){
+  df <- subset(data, country_code == country)
+  day_of_year <- 0
+  vec <- c()
+  for(day in df$date){
+    day_of_year <- day_of_year + 1
+    vec <- c(vec, day_of_year)
+  }
+  main <- append(main, vec)
+}
+data$day_of_year <- main
 
+rm(df, day_of_year)
 #Confirmed Cases
 main <- c()
 for(country in unique(data$country_code)){
@@ -170,7 +183,7 @@ for(country in unique(data_known_deaths$country_code)){
   df <- subset(data_known_deaths, country_code== country)
   days_since_first <- 0
   vec <- c()
-  for(day in df$Date){
+  for(day in df$date){
     days_since_first <- days_since_first + 1
     vec <- c(vec, days_since_first)
   }
@@ -183,7 +196,7 @@ for(country in unique(data_known_cases$country_code)){
   df <- subset(data_known_cases, country_code == country)
   days_since_first <- 0
   vec <- c()
-  for(day in df$Date){
+  for(day in df$date){
     days_since_first <- days_since_first + 1
     vec <- c(vec, days_since_first)
   }
