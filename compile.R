@@ -174,8 +174,8 @@ data$spare_beds_per_million <- data$hospital_beds_per_million - data$cases_per_m
 
 
 #Constrain Data to only consider results after 1 Death
-data_known_deaths <- subset(data, data$confirmed_cases >= 1)
-data_known_cases <- subset(data, data$confirmed_deaths >= 1)
+data_known_cases <- subset(data, data$confirmed_cases >= 1)
+data_known_deaths <- subset(data, data$confirmed_deaths >= 1)
 
 #New variable for indexing
 main <- c()
@@ -205,6 +205,10 @@ for(country in unique(data_known_cases$country_code)){
 data_known_cases$days_since_first_case <- main
 
 rm(country, day, days_since_first, main, vec, df)
+
+
+data <- merge(data, data_known_cases[c('country_code', 'date', 'days_since_first_case')], by=c("country_code", "date"), all.x = TRUE)
+data <- merge(data, data_known_deaths[c('country_code', 'date', 'days_since_first_death')], by=c("country_code", "date"), all.x = TRUE)
 
 ###PLOT
 #death_traj <- ggplot(data_known_deaths, aes(x = days_since_first_death, y = log(ConfirmedDeaths), group = CountryCode, color = CountryCode)) +
