@@ -7,14 +7,18 @@ import dash_html_components as html
 from dash.dependencies import Input, Output
 import plotly.express as px
 import plotly.graph_objs as go
+from dash.exceptions import PreventUpdate
+import locale
+locale.setlocale(locale.LC_ALL, 'en_US')
 
 
 app = dash.Dash()
 
 covid_data = pd.read_csv("data/covid_country_level_data.csv")
-covid_data.drop(columns = ['s1_is_general', 's2_is_general', 's3_is_general', 's4_is_general',
-                           's5_is_general', 's6_is_general', 'stringency_index', 'age_percent_0_to_14',
+covid_data.drop(columns = ['m1_wildcard', 'stringency_index','legacy_stringency_index_for_display', 'legacy_stringency_index', 'age_percent_0_to_14',
                            'age_percent_15_to_64'], inplace = True)
+
+
 
 app.layout = html.Div([
 
@@ -29,29 +33,34 @@ app.layout = html.Div([
                     max=max(covid_data['day_of_year']), value=max(covid_data['day_of_year'])-1,
                     marks = {
                         min(covid_data['day_of_year'])+9: {'label': str((dt.datetime(2020, 1, 1) + dt.timedelta(min(covid_data['day_of_year'])+8)).strftime("%b %d, %Y"))},
-                        #max(covid_data['day_of_year'])-5: {'label': str((dt.datetime(2020, 1, 1) + dt.timedelta(max(covid_data['day_of_year'])-6)).strftime("%b %d, %y"))}
                     }),
     ]),
 
-
     html.Div([
+    html.Div([
+
 
         html.Div([
             dcc.Dropdown(id="variable_selector",
                 options =  [{'label': 'Confirmed Cases', 'value': 'confirmed_cases'},
                             {'label': 'Confirmed Deaths', 'value': 'confirmed_deaths'},
-                            {'label': 'School Closing', 'value': 's1_school_closing'},
-                            {'label': 'Workplace Closing', 'value': 's2_workplace_closing'},
-                            {'label': 'Public Events Cancelled', 'value': 's3_cancel_public_events'},
-                            {'label': 'Public Transportation Closed', 'value': 's4_close_public_transport'},
-                            {'label': 'Public Information Campaigns', 'value': 's5_public_information_campaigns'},
-                            {'label': 'Restrictions on Internal Movement', 'value': 's6_restrictions_on_internal_movement'},
-                            {'label': 'International Travel Controls', 'value': 's7_international_travel_controls'},
-                            {'label': 'Fiscal Measures Emplaced', 'value': 's8_fiscal_measures'},
-                            {'label': 'Monetary Measures Emplaced', 'value': 's9_monetary_measures'},
-                            {'label': 'Emergency Investment in Health Care', 'value': 's10_emergency_investment_in_health_care'},
-                            {'label': 'Investment in Vaccines', 'value': 's11_investment_in_vaccines'},
-                            {'label': 'Contract Tracing', 'value': 's13_contact_tracing'},
+                            {'label': 'School Closing', 'value': 'c1_school_closing'},
+                            {'label': 'Restrict Gatherings', 'value': 'c4_restrictions_on_gatherings'},
+                            {'label': 'Workplace Closing', 'value': 'c2_workplace_closing'},
+                            {'label': 'Stay at Home Requirements', 'value': 'c6_stay_at_home_requirements' },
+                            {'label': 'Public Events Cancelled', 'value': 'c3_cancel_public_events'},
+                            {'label': 'Public Transportation Closed', 'value': 'c5_close_public_transport'},
+                            {'label': 'Public Information Campaigns', 'value': 'h1_public_information_campaigns'},
+                            {'label': 'Restrictions on Internal Movement', 'value': 'c7_restrictions_on_internal_movement'},
+                            {'label': 'International Travel Controls', 'value': 'c8_international_travel_controls'},
+                            {'label': 'Fiscal Measures', 'value': 'e3_fiscal_measures'},
+                            {'label': 'Testing Policy', 'value':'h2_testing_policy'},
+                            {'label': 'Contact Tracing', 'value': 'h3_contact_tracing'},
+                            {'label': 'Emergency Investment in Health Care', 'value': 'h4_emergency_investment_in_health_care'},
+                            {'label': 'Investment in Vaccines', 'value': 'h5_investment_in_vaccines'},
+                            {'label': 'Income Support', 'value': 'e1_income_support'},
+                            {'label': 'Debt Contract Relief', 'value': 'e2_debt_contract_relief'},
+                            {'label': 'Recieving International Support', 'value': 'e4_international_support'},
                             {'label': 'Stringency Index', 'value': 'stringency_index_for_display'},
                             {'label': 'Hospital Beds per Million', 'value': 'hospital_beds_per_million'},
                             {'label': 'Population Density', 'value': 'people_per_sq_km'},
@@ -62,7 +71,7 @@ app.layout = html.Div([
                             {'label': 'COVID19 Related Deaths per Million', 'value': 'deaths_per_million'},
                             {'label': 'COVID19 Confirmed Cases per Million', 'value': 'cases_per_million'},
                             {'label': 'Spare Hospital Beds per Million', 'value': 'spare_beds_per_million'}],
-                value = 'confirmed_deaths',
+                value = 'confirmed_deaths', placeholder = "Select a Metric to Observe"
                 )]),
 
                 html.Div([dcc.Graph(id='map')])],
@@ -74,24 +83,34 @@ app.layout = html.Div([
     html.Div([
 
         html.Div([
-            dcc.Dropdown(id="line_selector",
-                options = [{'label': 'Confirmed Cases', 'value': 'confirmed_cases'},
-                           {'label': 'Confirmed Deaths', 'value': 'confirmed_deaths'},
-                           {'label': 'COVID19 Related Deaths per Million', 'value': 'deaths_per_million'},
-                           {'label': 'COVID19 Confirmed Cases per Million', 'value': 'cases_per_million'},
-                           {'label': 'Spare Hospital Beds per Million', 'value': 'spare_beds_per_million'}],
-                           value = 'confirmed_deaths')
-                           ]),
+
+        html.Div([dcc.Dropdown(id="line_selector",
+            options = [{'label': 'Confirmed Cases', 'value': 'confirmed_cases'},
+                       {'label': 'Confirmed Deaths', 'value': 'confirmed_deaths'},
+                       {'label': 'COVID19 Related Deaths per Million', 'value': 'deaths_per_million'},
+                       {'label': 'COVID19 Confirmed Cases per Million', 'value': 'cases_per_million'},
+                       {'label': 'Spare Hospital Beds per Million', 'value': 'spare_beds_per_million'}],
+                       value = 'confirmed_deaths', placeholder = "Select a Metric to Observe")]),
+        html.Div([dcc.Dropdown(id="country_selector",
+            options = [{'label': f"{value}", 'value':f"{value}"} for value in covid_data['country_name'].unique()],
+                       multi=True, placeholder = "Select Specific Countries to Display")
+                       ])]),
 
         html.Div([dcc.Graph(id = 'growth')])],
 
         style={'width':'40%', 'display':'inline-block'}
-    ),
+
+    )]),
 
     html.Div([
     dcc.Markdown(id="covid_stats")
-    ], style={'text-align':'center', 'font-family':'sans-serif'})
-])
+    ], style={'text-align':'center', 'font-family':'sans-serif'}),
+
+    html.Div([
+        html.P(["Created by: Brian VandenAkker"], style= {'text-align': 'left','font-size': '10px', 'display':'inline-block', 'width':'20%'}),
+        html.P(["Data source: Thomas Hale, Sam Webster, Anna Petherick, Toby Phillips, and Beatriz Kira.(2020). Oxford COVID-19 Government Response Tracker. Blavatnik School of Government."], style = {'text-align': 'right','font-size': '10px', 'display':'inline-block', 'width':'70%'})
+],style = {'text-align': 'center'}
+)])
 
 
 @app.callback(
@@ -100,6 +119,9 @@ app.layout = html.Div([
     Input(component_id='date_slider', component_property= 'value')],
 )
 def update_map(var_selected, date_selected):
+    if var_selected is None:
+        raise PreventUpdate
+
     df = covid_data[[var_selected, 'day_of_year', 'date', 'country_name']].query(f"day_of_year=={date_selected}")
 
     map = go.Figure(data=go.Choropleth(
@@ -115,7 +137,6 @@ def update_map(var_selected, date_selected):
         hoverinfo = 'location+text'
         ))
     map.update_layout(
-        title_x = 0.5,
         margin=dict(
         l=5,
         r=50,
@@ -135,34 +156,107 @@ def update_map(var_selected, date_selected):
 @app.callback(
     Output(component_id='growth', component_property='figure'),
     [Input(component_id='line_selector', component_property='value'),
+     Input(component_id='country_selector', component_property='value'),
      Input(component_id='date_slider', component_property= 'value')]
 )
-def update_graph(var_selected, date_selected):
-    if('death' in var_selected):
-        df = covid_data[[var_selected, 'day_of_year', 'date', 'country_name',
-                        'days_since_first_death']].query(f"days_since_first_death>0 & day_of_year <= {date_selected}")
-        fig = px.line(df, x='days_since_first_death', y=var_selected, color='country_name',
-                        line_shape='spline', render_mode='svg', hover_name='country_name',)
-        fig.update_layout(yaxis_type="log", showlegend=False, plot_bgcolor='white',
-                            margin=dict(
-                            l=0,
-                            r=50,
-                            b=50,
-                            t=0,
-                            pad=0
-                            ))
+def update_graph(var_selected, country_selected, date_selected):
+    if var_selected is None:
+        raise PreventUpdate
+    elif country_selected is None:
+        if('death' in var_selected):
+            df = covid_data[[var_selected, 'day_of_year', 'date', 'country_name',
+                            'days_since_first_death']].query(f"days_since_first_death>0 & day_of_year <= {date_selected}")
+            fig = px.line(df, x='days_since_first_death', y=var_selected, color='country_name',
+                            line_shape='spline', render_mode='svg', hover_name='country_name',)
+            fig.update_layout(yaxis_type="log", showlegend=False, plot_bgcolor='white',
+                                margin=dict(
+                                l=0,
+                                r=50,
+                                b=50,
+                                t=0,
+                                pad=0
+                                )),
+            fig.update_xaxes(title_text= 'Days Since First Death'),
+            fig.update_yaxes(title_text = var_selected.replace('_', ' ').title())
+        else:
+            df = covid_data[[var_selected, 'day_of_year', 'date', 'country_name',
+                            'days_since_first_case']].query(f"days_since_first_case>0 & day_of_year <= {date_selected}")
+            fig = px.line(df, x='days_since_first_case', y=var_selected, color='country_name')
+            fig.update_layout(yaxis_type="log", showlegend=False, plot_bgcolor='white',
+                                margin=dict(
+                                l=0,
+                                r=50,
+                                b=50,
+                                t=0,
+                                pad=0
+                                )),
+            fig.update_xaxes(title_text= 'Days Since First Case'),
+            fig.update_yaxes(title_text = var_selected.replace('_', ' ').title())
+
     else:
-        df = covid_data[[var_selected, 'day_of_year', 'date', 'country_name',
-                        'days_since_first_case']].query(f"days_since_first_case>0 & day_of_year <= {date_selected}")
-        fig = px.line(df, x='days_since_first_case', y=var_selected, color='country_name')
-        fig.update_layout(yaxis_type="log", showlegend=False, plot_bgcolor='white',
-                            margin=dict(
-                            l=0,
-                            r=50,
-                            b=50,
-                            t=0,
-                            pad=0
-                            ))
+        if('death' in var_selected):
+
+            df = covid_data[[var_selected, 'day_of_year', 'date', 'country_name',
+                            'days_since_first_death']].query(f"days_since_first_death>0 & day_of_year <= {date_selected} & country_name == {country_selected}")
+            try:
+                fig = px.line(df, x='days_since_first_death', y=var_selected, color='country_name',
+                                line_shape='spline', render_mode='svg', hover_name='country_name')
+                fig.update_layout(yaxis_type="log", showlegend=False, plot_bgcolor='white',
+                                    margin=dict(
+                                    l=0,
+                                    r=50,
+                                    b=50,
+                                    t=0,
+                                    pad=0
+                                    )),
+                fig.update_xaxes(title_text= 'Days Since First Death'),
+                fig.update_yaxes(title_text = var_selected.replace('_', ' ').title())
+            except:
+                df = covid_data[[var_selected, 'day_of_year', 'date', 'country_name',
+                                'days_since_first_death']].query(f"days_since_first_death>0 & day_of_year <= {date_selected}")
+                fig = px.line(df, x='days_since_first_death', y=var_selected, color='country_name',
+                                line_shape='spline', render_mode='svg', hover_name='country_name')
+                fig.update_layout(yaxis_type="log", showlegend=False, plot_bgcolor='white',
+                                    margin=dict(
+                                    l=0,
+                                    r=50,
+                                    b=50,
+                                    t=0,
+                                    pad=0
+                                    )),
+                fig.update_xaxes(title_text= 'Days Since First Death'),
+                fig.update_yaxes(title_text = var_selected.replace('_', ' ').title())
+        else:
+            df = covid_data[[var_selected, 'day_of_year', 'date', 'country_name',
+                            'days_since_first_case']].query(f"days_since_first_case>0 & day_of_year <= {date_selected} & country_name == {country_selected}")
+            try:
+                fig = px.line(df, x='days_since_first_case', y=var_selected, color='country_name')
+                fig.update_layout(yaxis_type="log", showlegend=False, plot_bgcolor='white',
+                                    margin=dict(
+                                    l=0,
+                                    r=50,
+                                    b=50,
+                                    t=0,
+                                    pad=0
+                                    )),
+                fig.update_xaxes(title_text= 'Days Since First Case'),
+                fig.update_yaxes(title_text = var_selected.replace('_', ' ').title())
+            except:
+                df = covid_data[[var_selected, 'day_of_year', 'date', 'country_name',
+                                'days_since_first_case']].query(f"days_since_first_case>0 & day_of_year <= {date_selected}")
+                fig = px.line(df, x='days_since_first_case', y=var_selected, color='country_name',
+                                line_shape='spline', render_mode='svg', hover_name='country_name')
+                fig.update_layout(yaxis_type="log", showlegend=False, plot_bgcolor='white',
+                                    margin=dict(
+                                    l=0,
+                                    r=50,
+                                    b=50,
+                                    t=0,
+                                    pad=0
+                                    )),
+                fig.update_xaxes(title_text= 'Days Since First Case'),
+                fig.update_yaxes(title_text = var_selected.replace('_', ' ').title())
+
 
     return fig
 
@@ -177,18 +271,18 @@ def display_date(date_selected):
 
 @app.callback(
     Output(component_id='covid_stats', component_property='children'),
-    [Input(component_id='line_selector', component_property='value'),
-     Input(component_id='date_slider', component_property= 'value')]
+    [Input(component_id='date_slider', component_property= 'value')]
 )
-def covid_stats(var_selected, date_selected):
+def covid_stats(date_selected):
     df = covid_data[['day_of_year', 'date', 'country_name', 'confirmed_cases', 'confirmed_deaths',
-                    'stringency_index_for_display', 's1_school_closing', 's6_restrictions_on_internal_movement']].query(f"day_of_year=={date_selected}")
+                    'stringency_index_for_display', 'c1_school_closing', 'c2_workplace_closing', 'c6_stay_at_home_requirements']].query(f"day_of_year=={date_selected}")
 
     summary = f"""
     Global Statistics \n
-    Confirmed Cases: {df['confirmed_cases'].sum()} |
-    Countries who've closed schools: {np.count_nonzero(df['s1_school_closing'])} |
-    Countries who've restricted internal movement: {np.count_nonzero(df['s6_restrictions_on_internal_movement'])}
+    Confirmed Cases: {locale.format("%d", df['confirmed_cases'].sum(), grouping=True)} |
+    Countries who've closed schools: {np.count_nonzero(df['c1_school_closing'])} |
+    Countries with workplace closings: {(np.count_nonzero(df['c2_workplace_closing']))} |
+    Countries who've imposed state at home requirements: {np.count_nonzero(df['c6_stay_at_home_requirements'])}
     """
     return summary
 

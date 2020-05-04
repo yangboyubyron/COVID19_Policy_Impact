@@ -15,19 +15,13 @@ rm(library.list, i)
 # Set working directory
 setwd("C:/Users/brian/Documents/COVID_REGRESSIONS_DATA/data")
 
-#Load Data
-state_restric <- read.csv("OxCGRT_Download_230420_091240_Full.csv")
-meta_data <- read.csv("./metadata/Metadata_Country_API_EN.POP.DNST_DS2_en_csv_v2_988966.csv")
+data <- read.csv(url('https://raw.githubusercontent.com/OxCGRT/covid-policy-tracker/master/data/OxCGRT_latest.csv'))
 
 
-#Drop some columns not needed for our purposes and reassign to main df
-data <- state_restric[, -grep("Notes", colnames(state_restric))]
-data <- subset(data, select = -c(X))
-
-rm(state_restric)
-
+data <- data[, -grep("Flag", colnames(data))]
 
 colnames(data) <- tolower(gsub("__", "_", substring(gsub("[ .]", "_", gsub('([[:upper:]])', ' \\1', colnames(data))), 2)))
+
 
 variable_search <- function(df, search_range = 20){
   df <- data.frame(df)
@@ -210,35 +204,10 @@ rm(country, day, days_since_first, main, vec, df)
 data <- merge(data, data_known_cases[c('country_code', 'date', 'days_since_first_case')], by=c("country_code", "date"), all.x = TRUE)
 data <- merge(data, data_known_deaths[c('country_code', 'date', 'days_since_first_death')], by=c("country_code", "date"), all.x = TRUE)
 
-###PLOT
-#death_traj <- ggplot(data_known_deaths, aes(x = days_since_first_death, y = log(ConfirmedDeaths), group = CountryCode, color = CountryCode)) +
-#              geom_line(linetype = "solid", size = 1) 
-#death_traj
-
-"""
-#Temperature Statistics by Country
-state_temps <- read.csv("monthly_temps_by_country.csv")
-require(data.table)
-state_temps =na.omit(as.data.table(state_temps), cols=c("Mean.Temp", "Precip...mm."))
-state_temps <- state_temps[, .(median(Mean.Temp), median(Precip...mm.)), by = .(Country, Month)]
-
-#Subset data by month in order to merge temperature statistics across months
-library(lubridate)
-data$month <- month(ymd(data$Date))
-jan <- subset(data, month == 1)
-feb <- subset(data, month == 2)
-mar <- subset(data, month == 3)
-apr <- subset(data, month == 4)
-
-state_temps$Country <- strsplit(tolower(state_temps$Country), " ")
-jan$CountryName <- strsplit(tolower(jan$CountryName), " ")
-
-rm(jan, feb, mar, apr, state_temps)
-"""
 
 covid_country_level_data <- data
 rm(data)
 
 write.csv(covid_country_level_data, "C:/Users/brian/Documents/GitHub/COVID19_Policy_Impact/data/covid_country_level_data.csv")
-write.csv(data_known_cases, "C:/Users/brian/Documents/GitHub/COVID19_Policy_Impact/data/known_covid19_deaths.csv")
-write.csv(data_known_deaths, "C:/Users/brian/Documents/GitHub/COVID19_Policy_Impact/data/known_covid19_cases.csv")
+write.csv(data_known_deaths, "C:/Users/brian/Documents/GitHub/COVID19_Policy_Impact/data/known_covid19_deaths.csv")
+write.csv(data_known_cases, "C:/Users/brian/Documents/GitHub/COVID19_Policy_Impact/data/known_covid19_cases.csv")
