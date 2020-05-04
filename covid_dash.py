@@ -115,8 +115,14 @@ def update_map(var_selected, date_selected):
         hoverinfo = 'location+text'
         ))
     map.update_layout(
-        title_text = f'{var_selected} as of {date_selected}',
         title_x = 0.5,
+        margin=dict(
+        l=5,
+        r=50,
+        b=0,
+        t=0,
+        pad=2
+        ),
         geo=dict(
             showframe = False,
             showcoastlines = True,
@@ -124,8 +130,6 @@ def update_map(var_selected, date_selected):
         ))
 
     return map
-
-
 
 
 @app.callback(
@@ -139,12 +143,26 @@ def update_graph(var_selected, date_selected):
                         'days_since_first_death']].query(f"days_since_first_death>0 & day_of_year <= {date_selected}")
         fig = px.line(df, x='days_since_first_death', y=var_selected, color='country_name',
                         line_shape='spline', render_mode='svg', hover_name='country_name',)
-        fig.update_layout(yaxis_type="log", showlegend=False, plot_bgcolor='white')
+        fig.update_layout(yaxis_type="log", showlegend=False, plot_bgcolor='white',
+                            margin=dict(
+                            l=0,
+                            r=50,
+                            b=50,
+                            t=0,
+                            pad=0
+                            ))
     else:
         df = covid_data[[var_selected, 'day_of_year', 'date', 'country_name',
                         'days_since_first_case']].query(f"days_since_first_case>0 & day_of_year <= {date_selected}")
         fig = px.line(df, x='days_since_first_case', y=var_selected, color='country_name')
-        fig.update_layout(yaxis_type="log", showlegend=False, plot_bgcolor='white')
+        fig.update_layout(yaxis_type="log", showlegend=False, plot_bgcolor='white',
+                            margin=dict(
+                            l=0,
+                            r=50,
+                            b=50,
+                            t=0,
+                            pad=0
+                            ))
 
     return fig
 
