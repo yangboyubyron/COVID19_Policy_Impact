@@ -108,7 +108,7 @@ app.layout = html.Div([
 
     html.Div([
         html.P(["Created by: Brian VandenAkker"], style= {'text-align': 'left','font-size': '10px', 'display':'inline-block', 'width':'20%'}),
-        html.P(["Data source: Thomas Hale, Sam Webster, Anna Petherick, Toby Phillips, and Beatriz Kira.(2020). Oxford COVID-19 Government Response Tracker. Blavatnik School of Government."], style = {'text-align': 'right','font-size': '10px', 'display':'inline-block', 'width':'70%'})
+        html.P(["Primary Data Source: Thomas Hale, Sam Webster, Anna Petherick, Toby Phillips, and Beatriz Kira.(2020). Oxford COVID-19 Government Response Tracker. Blavatnik School of Government."], style = {'text-align': 'right','font-size': '10px', 'display':'inline-block', 'width':'70%'})
 ],style = {'text-align': 'center'}
 )])
 
