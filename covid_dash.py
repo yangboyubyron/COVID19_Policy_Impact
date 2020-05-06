@@ -78,7 +78,7 @@ app.layout = html.Div([
                                {'label': 'Confirmed Deaths', 'value': 'confirmed_deaths'},
                                {'label': 'COVID19 Related Deaths per Million', 'value': 'deaths_per_million'},
                                {'label': 'COVID19 Confirmed Cases per Million', 'value': 'cases_per_million'},
-                               {'label': 'Spare Hospital Beds per Million', 'value': 'spare_beds_per_million'}],
+                               {'label': 'Estimated Spare Hospital Beds per Million', 'value': 'spare_beds_per_million'}],
                                value = 'confirmed_deaths', placeholder = "Select a Metric to Observe")], style = {'width':'20%', 'display':'inline-block'}),
 
                 html.Div([dcc.Dropdown(id="country_selector",

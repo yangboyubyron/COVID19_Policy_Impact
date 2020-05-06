@@ -164,7 +164,13 @@ rm(df, cases, country, deaths, last_recorded, main, vec, variable_search)
 data$deaths_per_million <- data$confirmed_deaths/data$population_millions
 data$cases_per_million <- data$confirmed_cases/data$population_millions
 
-data$spare_beds_per_million <- data$hospital_beds_per_million - data$cases_per_million
+
+#ROUGH Estimates for hospitalization rates borrowed from: https://www.statista.com/statistics/1105402/covid-hospitalization-rates-us-by-age-group/
+#Bed occupancy rate used is an average over 28 OECD countries: https://www.oecd-ilibrary.org/sites/0d67e02a-en/index.html?itemId=/content/component/0d67e02a-en
+#1-BOR is an estimated proportion of hospital beds available for COVID-19 patients. Then using estimates for 
+#hospitalization rates by age demographic to approximate number of COVID related hospitalizations to determine
+#an approximate number of hospital beds remaining per million people.
+data$spare_beds_per_million <- (data$hospital_beds_per_million *(1-0.752)) - (data$cases_per_million *(data$age_percent_65_UP/100)*0.445) - (data$cases_per_million*(data$age_percent_15_to_64/100)*0.2) - (data$cases_per_million*(data$age_percent_0_to_14/100)*0.01)
 
 
 #Constrain Data to only consider results after 1 Death
