@@ -3,7 +3,7 @@ cat("\f")
 
 
 # Prepare needed libraries
-library.list <- c("tidyr", "tidyverse")
+library.list <- c("tidyr", "tidyverse", "zoo", "pracma")
 for (i in 1:length(library.list)) {
   if (!library.list[i] %in% rownames(installed.packages())) {
     install.packages(library.list[i])
@@ -171,6 +171,81 @@ data$cases_per_million <- data$confirmed_cases/data$population_millions
 #hospitalization rates by age demographic to approximate number of COVID related hospitalizations to determine
 #an approximate number of hospital beds remaining per million people.
 data$spare_beds_per_million <- (data$hospital_beds_per_million *(1-0.752)) - (data$cases_per_million *(data$age_percent_65_UP/100)*0.445) - (data$cases_per_million*(data$age_percent_15_to_64/100)*0.2) - (data$cases_per_million*(data$age_percent_0_to_14/100)*0.01)
+
+
+
+
+#New variable for %change in dependent vars. 
+main <- c()
+for(country in unique(data$country_code)){
+  df <- subset(data, country_code == country)
+  last_recorded <- NA
+  vec <- c()
+  for(deaths in df$deaths_per_million){
+    if(length(vec) == 0){
+      prev_deaths <- deaths
+      vec <- c(vec, last_recorded)
+    }
+    else{
+      pct_change <- (deaths - prev_deaths)/prev_deaths
+      last_recorded <- pct_change
+      vec <- c(vec, last_recorded)
+      prev_deaths <- deaths
+    }
+  }
+  main <- append(main, vec)
+}
+data$percent_change_deaths_per_million <- main
+
+main <- c()
+for(country in unique(data$country_code)){
+  df <- subset(data, country_code == country)
+  main <- c(main, movavg(df$percent_change_deaths_per_million, 5, type=c('s'))*100)
+}
+data$ma_percent_change_deaths_per_million <- main
+
+data = subset(data, select = -c(percent_change_deaths_per_million) )
+
+data$ma_percent_change_deaths_per_million[data$ma_percent_change_deaths_per_million == "NaN"] = NA
+data$ma_percent_change_deaths_per_million[data$ma_percent_change_deaths_per_million == "Inf"] = NA
+
+
+#Same, but for confirmed cases
+main <- c()
+for(country in unique(data$country_code)){
+  df <- subset(data, country_code == country)
+  last_recorded <- NA
+  vec <- c()
+  for(cases in df$cases_per_million){
+    if(length(vec) == 0){
+      prev_cases <- cases
+      vec <- c(vec, last_recorded)
+    }
+    else{
+      pct_change <- (cases - prev_cases)/prev_cases
+      last_recorded <- pct_change
+      vec <- c(vec, last_recorded)
+      prev_cases <- cases
+    }
+  }
+  main <- append(main, vec)
+}
+data$percent_change_cases_per_million <- main
+
+main <- c()
+for(country in unique(data$country_code)){
+  df <- subset(data, country_code == country)
+  main <- c(main, movavg(df$percent_change_cases_per_million, 5, type=c('s'))*100)
+}
+data$ma_percent_change_cases_per_million <- main
+
+data = subset(data, select = -c(percent_change_cases_per_million) )
+
+data$ma_percent_change_cases_per_million[data$ma_percent_change_cases_per_million == "NaN"] = NA
+data$ma_percent_change_cases_per_million[data$ma_percent_change_cases_per_million == "Inf"] = NA
+
+rm(cases, country, day, deaths, last_recorded, main, pct_change, df, prev_cases, prev_deaths, vec)
+
 
 
 #Constrain Data to only consider results after 1 Death

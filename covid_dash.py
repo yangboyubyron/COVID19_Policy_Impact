@@ -69,7 +69,7 @@ app.layout = html.Div([
                             {'label': 'Percent Smoking', 'value': 'percent_smoking_prev'},
                             {'label': 'COVID19 Related Deaths per Million', 'value': 'deaths_per_million'},
                             {'label': 'COVID19 Confirmed Cases per Million', 'value': 'cases_per_million'},
-                            {'label': 'Spare Hospital Beds per Million', 'value': 'spare_beds_per_million'}],
+                            {'label': 'Estimated Spare Hospital Beds per Million', 'value': 'spare_beds_per_million'}],
                 value = 'confirmed_deaths', placeholder = "Select a Metric to Observe"
                 )], style = {'width': '60%', 'display':'inline-block'}),
 
@@ -336,7 +336,7 @@ def covid_stats(date_selected):
     Confirmed Cases: {locale.format("%d", df['confirmed_cases'].sum(), grouping=True)} |
     Total Deaths: {locale.format("%d", np.sum(df['confirmed_deaths']), grouping = True)} |
     Countries with workplace closings: {(np.count_nonzero(df['c2_workplace_closing']))} |
-    Countries with state at home requirements: {np.count_nonzero(df['c6_stay_at_home_requirements'])}
+    Countries with state at home requirements: {sum(1 for i in df['c6_stay_at_home_requirements'] if i and pd.notnull(i))}
     """
     return summary
 
