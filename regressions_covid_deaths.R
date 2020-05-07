@@ -24,7 +24,7 @@ reg1 <- lm(ma_percent_change_deaths_per_million ~ lag(stringency_index_for_displ
              
              people_per_sq_km + gdp_percap + 
              population_millions + age_percent_15_to_64 + age_percent_65_UP +
-             percent_smoking_prev + cases_per_million + spare_beds_per_million,
+             percent_smoking_prev +  spare_beds_per_million,
            data = known_covid19_deaths)
 
 
@@ -36,14 +36,14 @@ reg2 <- lm(ma_percent_change_deaths_per_million ~  lag(c1_school_closing, 14) + 
              
              people_per_sq_km + gdp_percap + 
              population_millions + age_percent_15_to_64 + age_percent_65_UP +
-             percent_smoking_prev + cases_per_million + spare_beds_per_million,
+             percent_smoking_prev + spare_beds_per_million,
            data = known_covid19_deaths)
 
 
 ##############FIXED EFFECTS MODEL###################################
 reg3 <- plm(ma_percent_change_deaths_per_million ~  lag(stringency_index_for_display, 14) +
               
-              + cases_per_million + spare_beds_per_million,
+              + spare_beds_per_million,
             data = known_covid19_deaths, model = 'within', index=c('country_code', 'date'))
 
 
@@ -103,7 +103,7 @@ for(lag in 1:25){
                 lag(c7_restrictions_on_internal_movement, lag) + lag(c8_international_travel_controls, lag) +
                 lag(h1_public_information_campaigns, lag) + lag(h2_testing_policy, lag) + lag(h3_contact_tracing, lag) +
                 
-                cases_per_million + spare_beds_per_million,
+                spare_beds_per_million,
               data = known_covid19_deaths, model = 'within', index=c('country_code', 'date'))
   
 
@@ -273,7 +273,7 @@ reg4 <- plm(ma_percent_change_deaths_per_million ~ lag(c1_school_closing, 14) + 
               lag(c5_close_public_transport, 14) + lag(c6_stay_at_home_requirements, 14) + 
               lag(c7_restrictions_on_internal_movement, 14) + lag(c8_international_travel_controls, 14) +
               lag(h1_public_information_campaigns, 14) + lag(h2_testing_policy, 14) + lag(h3_contact_tracing, 14) +
-              cases_per_million + spare_beds_per_million,
+              spare_beds_per_million,
             data = known_covid19_deaths, model = 'within', index=c('country_code', 'date'))
 
 
@@ -285,7 +285,7 @@ rm(s1_coef_plot, s1.data, s2_coef_plot, s2.data, s3_coef_plot, s3.data, s1_sig, 
 reg5 <- plm(ma_percent_change_deaths_per_million ~ lag(stringency_index_for_display, 14) +
                             
               people_per_sq_km + gdp_percap + population_millions + age_percent_15_to_64 + age_percent_65_UP +
-              percent_smoking_prev + cases_per_million + spare_beds_per_million,
+              percent_smoking_prev + spare_beds_per_million,
             data = known_covid19_deaths, model = 'random', index=c('country_code', 'date'))
 
 
@@ -344,7 +344,7 @@ for(lag in 1:25){
                 lag(h1_public_information_campaigns, lag) + lag(h2_testing_policy, lag) + lag(h3_contact_tracing, lag) +
                 
                 people_per_sq_km + gdp_percap + population_millions + age_percent_15_to_64 + age_percent_65_UP +
-                percent_smoking_prev + cases_per_million + spare_beds_per_million,
+                percent_smoking_prev + spare_beds_per_million,
               data = known_covid19_deaths, model = 'random', index=c('country_code', 'date'))
   
       s1 <- c(s1, summary(reg6)$coefficients[2,1])
@@ -516,7 +516,7 @@ reg6 <- plm(ma_percent_change_deaths_per_million ~ lag(c1_school_closing, 14) + 
               lag(h1_public_information_campaigns, 14) + lag(h2_testing_policy, 14) + lag(h3_contact_tracing, 14) +
               
               people_per_sq_km + gdp_percap + population_millions + age_percent_15_to_64 + age_percent_65_UP +
-              percent_smoking_prev + cases_per_million + spare_beds_per_million,
+              percent_smoking_prev +  spare_beds_per_million,
             data = known_covid19_deaths, model = 'random', index=c('country_code', 'date'))
 
 
@@ -528,9 +528,9 @@ rm(s1_coef_plot, s1.data, s2_coef_plot, s2.data, s3_coef_plot, s3.data, s1_sig, 
 
 #######SAVE RESULTS#############
 
-figure_fixed_effects_1 %>% ggexport(filename = "../figures/figure_fixed_effects_1.pdf")
-figure_fixed_effects_2 %>% ggexport(filename = "../figures/figure_fixed_effects_2.pdf")
-figure_random_effects_1 %>% ggexport(filename = "../figures/figure_random_effects_1.pdf")
-figure_random_effects_2 %>% ggexport(filename = "../figures/figure_random_effects_2.pdf")
-stargazer(reg1, reg2, reg3, reg4, reg5, reg6, title="Results", align=TRUE, type = 'html', out="../figures/regression_results.html")
+figure_fixed_effects_1 %>% ggexport(filename = "../figures/figure_fe_deaths_1.pdf")
+figure_fixed_effects_2 %>% ggexport(filename = "../figures/figure_fe_deaths_2.pdf")
+figure_random_effects_1 %>% ggexport(filename = "../figures/figure_re_deaths_1.pdf")
+figure_random_effects_2 %>% ggexport(filename = "../figures/figure_re_deaths_2.pdf")
+stargazer(reg1, reg2, reg3, reg4, reg5, reg6, title="Results: COVID19 Deaths", align=TRUE, type = 'html', out="../figures/regression_results_deaths.html")
 

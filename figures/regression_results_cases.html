@@ -1,0 +1,78 @@
+
+<table style="text-align:center"><caption><strong>Results: COVID19 Confirmed Cases</strong></caption>
+<tr><td colspan="7" style="border-bottom: 1px solid black"></td></tr><tr><td style="text-align:left"></td><td colspan="6"><em>Dependent variable:</em></td></tr>
+<tr><td></td><td colspan="6" style="border-bottom: 1px solid black"></td></tr>
+<tr><td style="text-align:left"></td><td colspan="6">ma_percent_change_cases_per_million</td></tr>
+<tr><td style="text-align:left"></td><td colspan="2"><em>OLS</em></td><td colspan="4"><em>panel</em></td></tr>
+<tr><td style="text-align:left"></td><td colspan="2"><em></em></td><td colspan="4"><em>linear</em></td></tr>
+<tr><td style="text-align:left"></td><td>(1)</td><td>(2)</td><td>(3)</td><td>(4)</td><td>(5)</td><td>(6)</td></tr>
+<tr><td colspan="7" style="border-bottom: 1px solid black"></td></tr><tr><td style="text-align:left">lag(stringency_index_for_display, 14)</td><td>-0.170<sup>***</sup></td><td></td><td>-0.210<sup>***</sup></td><td></td><td>-0.212<sup>***</sup></td><td></td></tr>
+<tr><td style="text-align:left"></td><td>(0.009)</td><td></td><td>(0.009)</td><td></td><td>(0.009)</td><td></td></tr>
+<tr><td style="text-align:left"></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td style="text-align:left">lag(c1_school_closing, 14)</td><td></td><td>0.955<sup>**</sup></td><td></td><td>-0.466</td><td></td><td>-0.318</td></tr>
+<tr><td style="text-align:left"></td><td></td><td>(0.474)</td><td></td><td>(0.343)</td><td></td><td>(0.376)</td></tr>
+<tr><td style="text-align:left"></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td style="text-align:left">lag(c2_workplace_closing, 14)</td><td></td><td>-1.830<sup>***</sup></td><td></td><td>-1.735<sup>***</sup></td><td></td><td>-1.850<sup>***</sup></td></tr>
+<tr><td style="text-align:left"></td><td></td><td>(0.397)</td><td></td><td>(0.448)</td><td></td><td>(0.476)</td></tr>
+<tr><td style="text-align:left"></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td style="text-align:left">lag(c3_cancel_public_events, 14)</td><td></td><td>4.395<sup>***</sup></td><td></td><td>-1.247<sup>**</sup></td><td></td><td>-1.068<sup>*</sup></td></tr>
+<tr><td style="text-align:left"></td><td></td><td>(0.731)</td><td></td><td>(0.548)</td><td></td><td>(0.591)</td></tr>
+<tr><td style="text-align:left"></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td style="text-align:left">lag(c4_restrictions_on_gatherings, 14)</td><td></td><td>-0.513<sup>*</sup></td><td></td><td>-1.429<sup>***</sup></td><td></td><td>-1.672<sup>***</sup></td></tr>
+<tr><td style="text-align:left"></td><td></td><td>(0.274)</td><td></td><td>(0.315)</td><td></td><td>(0.323)</td></tr>
+<tr><td style="text-align:left"></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td style="text-align:left">lag(c5_close_public_transport, 14)</td><td></td><td>0.027</td><td></td><td>-1.592<sup>***</sup></td><td></td><td>-0.833</td></tr>
+<tr><td style="text-align:left"></td><td></td><td>(0.467)</td><td></td><td>(0.543)</td><td></td><td>(0.556)</td></tr>
+<tr><td style="text-align:left"></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td style="text-align:left">lag(c6_stay_at_home_requirements, 14)</td><td></td><td>-0.428</td><td></td><td>-0.127</td><td></td><td>-0.404</td></tr>
+<tr><td style="text-align:left"></td><td></td><td>(0.459)</td><td></td><td>(0.547)</td><td></td><td>(0.553)</td></tr>
+<tr><td style="text-align:left"></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td style="text-align:left">lag(c7_restrictions_on_internal_movement, 14)</td><td></td><td>-4.243<sup>***</sup></td><td></td><td>-1.724<sup>***</sup></td><td></td><td>-2.233<sup>***</sup></td></tr>
+<tr><td style="text-align:left"></td><td></td><td>(0.545)</td><td></td><td>(0.540)</td><td></td><td>(0.577)</td></tr>
+<tr><td style="text-align:left"></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td style="text-align:left">lag(c8_international_travel_controls, 14)</td><td></td><td>-3.143<sup>***</sup></td><td></td><td>0.431</td><td></td><td>-0.049</td></tr>
+<tr><td style="text-align:left"></td><td></td><td>(0.298)</td><td></td><td>(0.300)</td><td></td><td>(0.301)</td></tr>
+<tr><td style="text-align:left"></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td style="text-align:left">lag(h1_public_information_campaigns, 14)</td><td></td><td>2.396<sup>***</sup></td><td></td><td>2.430<sup>***</sup></td><td></td><td>2.137<sup>***</sup></td></tr>
+<tr><td style="text-align:left"></td><td></td><td>(0.662)</td><td></td><td>(0.564)</td><td></td><td>(0.593)</td></tr>
+<tr><td style="text-align:left"></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td style="text-align:left">lag(h2_testing_policy, 14)</td><td></td><td>-0.654</td><td></td><td>1.290<sup>***</sup></td><td></td><td>1.173<sup>**</sup></td></tr>
+<tr><td style="text-align:left"></td><td></td><td>(0.432)</td><td></td><td>(0.463)</td><td></td><td>(0.483)</td></tr>
+<tr><td style="text-align:left"></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td style="text-align:left">lag(h3_contact_tracing, 14)</td><td></td><td>-0.139</td><td></td><td>0.483</td><td></td><td>1.043<sup>**</sup></td></tr>
+<tr><td style="text-align:left"></td><td></td><td>(0.444)</td><td></td><td>(0.544)</td><td></td><td>(0.524)</td></tr>
+<tr><td style="text-align:left"></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td style="text-align:left">people_per_sq_km</td><td>-0.001<sup>*</sup></td><td>-0.001<sup>**</sup></td><td></td><td></td><td>0.0001</td><td>0.0003</td></tr>
+<tr><td style="text-align:left"></td><td>(0.0004)</td><td>(0.0005)</td><td></td><td></td><td>(0.001)</td><td>(0.001)</td></tr>
+<tr><td style="text-align:left"></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td style="text-align:left">gdp_percap</td><td>0.00002</td><td>-0.00002</td><td></td><td></td><td>0.00003</td><td>-0.00002</td></tr>
+<tr><td style="text-align:left"></td><td>(0.00002)</td><td>(0.00002)</td><td></td><td></td><td>(0.00004)</td><td>(0.00004)</td></tr>
+<tr><td style="text-align:left"></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td style="text-align:left">population_millions</td><td>-0.004<sup>***</sup></td><td>-0.0005</td><td></td><td></td><td>-0.002</td><td>0.003</td></tr>
+<tr><td style="text-align:left"></td><td>(0.001)</td><td>(0.001)</td><td></td><td></td><td>(0.003)</td><td>(0.003)</td></tr>
+<tr><td style="text-align:left"></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td style="text-align:left">age_percent_15_to_64</td><td>-0.051</td><td>0.094</td><td></td><td></td><td>-0.003</td><td>0.034</td></tr>
+<tr><td style="text-align:left"></td><td>(0.055)</td><td>(0.069)</td><td></td><td></td><td>(0.117)</td><td>(0.132)</td></tr>
+<tr><td style="text-align:left"></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td style="text-align:left">age_percent_65_UP</td><td>-0.200<sup>***</sup></td><td>-0.134<sup>*</sup></td><td></td><td></td><td>-0.007</td><td>-0.173</td></tr>
+<tr><td style="text-align:left"></td><td>(0.059)</td><td>(0.073)</td><td></td><td></td><td>(0.136)</td><td>(0.142)</td></tr>
+<tr><td style="text-align:left"></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td style="text-align:left">percent_smoking_prev</td><td>0.071<sup>**</sup></td><td>0.039</td><td></td><td></td><td>0.080</td><td>0.035</td></tr>
+<tr><td style="text-align:left"></td><td>(0.035)</td><td>(0.041)</td><td></td><td></td><td>(0.075)</td><td>(0.083)</td></tr>
+<tr><td style="text-align:left"></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td style="text-align:left">cases_per_million</td><td></td><td></td><td></td><td></td><td>-0.003<sup>***</sup></td><td></td></tr>
+<tr><td style="text-align:left"></td><td></td><td></td><td></td><td></td><td>(0.001)</td><td></td></tr>
+<tr><td style="text-align:left"></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td style="text-align:left">spare_beds_per_million</td><td>0.001</td><td>0.0005</td><td>0.015<sup>***</sup></td><td>0.014<sup>***</sup></td><td>-0.001</td><td>0.003<sup>**</sup></td></tr>
+<tr><td style="text-align:left"></td><td>(0.0005)</td><td>(0.001)</td><td>(0.002)</td><td>(0.002)</td><td>(0.001)</td><td>(0.001)</td></tr>
+<tr><td style="text-align:left"></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td style="text-align:left">Constant</td><td>28.299<sup>***</sup></td><td>16.814<sup>***</sup></td><td></td><td></td><td>22.491<sup>***</sup></td><td>13.295</td></tr>
+<tr><td style="text-align:left"></td><td>(3.396)</td><td>(4.478)</td><td></td><td></td><td>(7.143)</td><td>(8.124)</td></tr>
+<tr><td style="text-align:left"></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td colspan="7" style="border-bottom: 1px solid black"></td></tr><tr><td style="text-align:left">Observations</td><td>6,117</td><td>5,078</td><td>3,694</td><td>3,431</td><td>2,887</td><td>2,680</td></tr>
+<tr><td style="text-align:left">R<sup>2</sup></td><td>0.056</td><td>0.087</td><td>0.248</td><td>0.270</td><td>0.260</td><td>0.266</td></tr>
+<tr><td style="text-align:left">Adjusted R<sup>2</sup></td><td>0.055</td><td>0.084</td><td>0.220</td><td>0.240</td><td>0.258</td><td>0.261</td></tr>
+<tr><td style="text-align:left">Residual Std. Error</td><td>19.692 (df = 6108)</td><td>20.427 (df = 5059)</td><td></td><td></td><td></td><td></td></tr>
+<tr><td style="text-align:left">F Statistic</td><td>45.301<sup>***</sup> (df = 8; 6108)</td><td>26.933<sup>***</sup> (df = 18; 5059)</td><td>587.171<sup>***</sup> (df = 2; 3560)</td><td>101.659<sup>***</sup> (df = 12; 3291)</td><td>1,011.929<sup>***</sup></td><td>963.870<sup>***</sup></td></tr>
+<tr><td colspan="7" style="border-bottom: 1px solid black"></td></tr><tr><td style="text-align:left"><em>Note:</em></td><td colspan="6" style="text-align:right"><sup>*</sup>p<0.1; <sup>**</sup>p<0.05; <sup>***</sup>p<0.01</td></tr>
+</table>

@@ -22,7 +22,6 @@ covid_data.drop(columns = ['m1_wildcard', 'stringency_index','legacy_stringency_
 
 app.layout = html.Div([
 
-
     html.H1(['Interact with the charts below to see how COVID-19 and State Responses are affecting the world'], style={'text-align':'center', 'font-size':'20px', 'font-family':'sans-serif'}),
 
 
@@ -76,8 +75,10 @@ app.layout = html.Div([
                 html.Div([dcc.Dropdown(id="line_selector",
                     options = [{'label': 'Confirmed Cases', 'value': 'confirmed_cases'},
                                {'label': 'Confirmed Deaths', 'value': 'confirmed_deaths'},
-                               {'label': 'COVID19 Related Deaths per Million', 'value': 'deaths_per_million'},
-                               {'label': 'COVID19 Confirmed Cases per Million', 'value': 'cases_per_million'},
+                               {'label': 'Deaths per Million', 'value': 'deaths_per_million'},
+                               {'label': 'Confirmed Cases per Million', 'value': 'cases_per_million'},
+                               {'label': 'Moving Average, % change in Deaths', 'value': 'ma_percent_change_deaths_per_million'},
+                               {'label': 'Moving Average, % change in new Cases', 'value': 'ma_percent_change_cases_per_million'},
                                {'label': 'Estimated Spare Hospital Beds per Million', 'value': 'spare_beds_per_million'}],
                                value = 'confirmed_deaths', placeholder = "Select a Metric to Observe")], style = {'width':'20%', 'display':'inline-block'}),
 

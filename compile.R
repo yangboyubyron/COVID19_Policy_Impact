@@ -197,6 +197,7 @@ for(country in unique(data$country_code)){
 }
 data$percent_change_deaths_per_million <- main
 
+#Calc. 5 day moving average 
 main <- c()
 for(country in unique(data$country_code)){
   df <- subset(data, country_code == country)
