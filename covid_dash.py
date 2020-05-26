@@ -340,8 +340,7 @@ def covid_stats(date_selected):
     Countries with state at home requirements: {sum(1 for i in df['c6_stay_at_home_requirements'] if i and pd.notnull(i))}
     """
     return summary
-
-
+server = app.server
 
 if __name__ == '__main__':
     app.run_server(debug=False)
