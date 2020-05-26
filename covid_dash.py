@@ -8,8 +8,8 @@ from dash.dependencies import Input, Output
 import plotly.express as px
 import plotly.graph_objs as go
 from dash.exceptions import PreventUpdate
-
-
+import locale
+locale.setlocale(locale.LC_ALL, 'en_US')
 
 
 app = dash.Dash(__name__)
@@ -18,7 +18,7 @@ covid_data = pd.read_csv("data/covid_country_level_data.csv")
 covid_data.drop(columns = ['m1_wildcard', 'stringency_index','legacy_stringency_index_for_display', 'legacy_stringency_index', 'age_percent_0_to_14',
                            'age_percent_15_to_64'], inplace = True)
 
-
+locale.setlocale(locale.LC_ALL, 'en_US')
 
 app.layout = html.Div([
 
@@ -334,12 +334,12 @@ def covid_stats(date_selected):
 
     summary = f"""
     Global Statistics \n
-
+    Confirmed Cases: {locale.format("%d", df['confirmed_cases'].sum(), grouping=True)} |
+    Total Deaths: {locale.format("%d", np.sum(df['confirmed_deaths']), grouping = True)} |
     Countries with workplace closings: {(np.count_nonzero(df['c2_workplace_closing']))} |
     Countries with state at home requirements: {sum(1 for i in df['c6_stay_at_home_requirements'] if i and pd.notnull(i))}
     """
     return summary
-
 server = app.server
 
 if __name__ == '__main__':
