@@ -9,7 +9,7 @@ import plotly.express as px
 import plotly.graph_objs as go
 from dash.exceptions import PreventUpdate
 import locale
-locale.setlocale(locale.LC_ALL, 'en_US')
+
 
 
 app = dash.Dash(__name__)
@@ -334,8 +334,8 @@ def covid_stats(date_selected):
 
     summary = f"""
     Global Statistics \n
-    Confirmed Cases: {locale.format("%d", df['confirmed_cases'].sum(), grouping=True)} |
-    Total Deaths: {locale.format("%d", np.sum(df['confirmed_deaths']), grouping = True)} |
+    Confirmed Cases: { df['confirmed_cases'].sum():,} |
+    Total Deaths: {np.sum(df['confirmed_deaths']):,} |
     Countries with workplace closings: {(np.count_nonzero(df['c2_workplace_closing']))} |
     Countries with state at home requirements: {sum(1 for i in df['c6_stay_at_home_requirements'] if i and pd.notnull(i))}
     """
